@@ -1,0 +1,169 @@
+<script setup>
+import { ref } from 'vue';
+import { v4 as uuidv4 } from 'uuid';
+
+const showModal = ref(false);
+const toggleModal = () => {
+  showModal.value = !showModal.value;
+};
+const newNote = ref('');
+const notes = ref([]);
+function getRandomColor() {
+  color = 'hsl(' + Math.random() * 360 + ', 100%, 75%)';
+  return color;
+}
+
+const addNote = () => {
+  notes.value.push({
+    id: uuidv4(),
+    text: newNote.value,
+    date: new Date(),
+    backgroundColor: getRandomColor()
+  });
+};
+</script>
+<template>
+  <main>
+    <div v-if="showModal" class="overlay">
+      <div class="modal">
+        <textarea
+          v-model="newNote"
+          name="note"
+          id="note"
+          cols="30"
+          rows="10"
+        ></textarea>
+        <button>Add Note</button>
+        <button class="close" @click="toggleModal">Close</button>
+      </div>
+    </div>
+    <div class="container">
+      <header>
+        {{ notes }}
+        <h1>Notes</h1>
+        <button @click="toggleModal">+</button>
+      </header>
+      <div class="cards-container">
+        <div class="card">
+          <p class="main-text">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia,
+            vitae.
+          </p>
+          <p class="date">17/01/2023</p>
+        </div>
+        <div class="card">
+          <p class="main-text">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia,
+            vitae.
+          </p>
+          <p class="date">17/01/2023</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</template>
+
+<style scoped>
+main {
+  height: 100vh;
+  width: 100vw;
+}
+.container {
+  max-width: 1000px;
+  padding: 10px;
+  margin: 0 auto;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+h1 {
+  font-weight: bold;
+  margin-bottom: 25px;
+  font-size: 75px;
+}
+header button {
+  border: none;
+  padding: 10px;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  background-color: rgb(21, 20, 20);
+  border-radius: 100%;
+  color: white;
+  font-size: 20px;
+}
+.card {
+  width: 225px;
+  height: 225px;
+  background-color: rgb(237, 182, 44);
+  padding: 10px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-right: 20px;
+  margin-bottom: 20px;
+}
+.date {
+  font-size: 12.5px;
+  color: #222222;
+  font-weight: bold;
+}
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+.overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.77);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal {
+  width: 750px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 30px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.modal button {
+  padding: 10px 20px;
+  font-size: 20px;
+  width: 100%;
+  background-color: blueviolet;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin-top: 15px;
+}
+.main-text {
+  font-weight: bold;
+}
+.modal .close {
+  background-color: rgba(176, 6, 6, 0.912);
+  margin-top: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  h1 {
+    color: rgba(235, 235, 235, 0.64);
+  }
+  header button {
+    background-color: rgba(235, 235, 235, 0.64);
+  }
+  .main-text {
+    color: black;
+  }
+  .overlay {
+    background-color: rgba(84, 84, 84, 0.48);
+  }
+}
+</style>
