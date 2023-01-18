@@ -7,19 +7,29 @@ const toggleModal = () => {
   showModal.value = !showModal.value;
 };
 const newNote = ref('');
+const errorMessage = ref('');
 const notes = ref([]);
 function getRandomColor() {
-  color = 'hsl(' + Math.random() * 360 + ', 100%, 75%)';
-  return color;
+  return 'hsl(' + Math.random() * 360 + ', 100%, 75%)';
 }
 
+const finishNote = () => {
+  toggleModal();
+  newNote.value = '';
+  errorMessage.value = '';
+};
+
 const addNote = () => {
+  if (newNote.value.length < 10) {
+    return (errorMessage.value = 'Note needs to have 10 characters or more.');
+  }
   notes.value.push({
     id: uuidv4(),
     text: newNote.value,
     date: new Date(),
     backgroundColor: getRandomColor()
   });
+  finishNote();
 };
 </script>
 <template>
@@ -27,36 +37,33 @@ const addNote = () => {
     <div v-if="showModal" class="overlay">
       <div class="modal">
         <textarea
-          v-model="newNote"
+          v-model.trim="newNote"
           name="note"
           id="note"
           cols="30"
           rows="10"
         ></textarea>
-        <button>Add Note</button>
-        <button class="close" @click="toggleModal">Close</button>
+        <p v-if="errorMessage">{{ errorMessage }}</p>
+        <button @click="addNote()">Add Note</button>
+        <button class="close" @click="finishNote()">Close</button>
       </div>
     </div>
     <div class="container">
       <header>
-        {{ notes }}
         <h1>Notes</h1>
         <button @click="toggleModal">+</button>
       </header>
       <div class="cards-container">
-        <div class="card">
+        <div
+          v-for="note in notes"
+          :key="note.id"
+          class="card"
+          :style="{ backgroundColor: note.backgroundColor }"
+        >
           <p class="main-text">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia,
-            vitae.
+            {{ note.text }}
           </p>
-          <p class="date">17/01/2023</p>
-        </div>
-        <div class="card">
-          <p class="main-text">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia,
-            vitae.
-          </p>
-          <p class="date">17/01/2023</p>
+          <p class="date">{{ note.date.toLocaleDateString('pt-BR') }}</p>
         </div>
       </div>
     </div>
@@ -150,6 +157,10 @@ header button {
 .modal .close {
   background-color: rgba(176, 6, 6, 0.912);
   margin-top: 8px;
+}
+.modal p {
+  color: rgba(176, 6, 6, 0.912);
+  font-weight: bold;
 }
 
 @media (prefers-color-scheme: dark) {
